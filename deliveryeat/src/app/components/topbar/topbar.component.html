@@ -1,0 +1,46 @@
+<div style="background-color: blacksmoke;">
+  <mat-toolbar class="bg-transparent">
+    <mat-toolbar-row style="color: black;">
+      <button style="outline: none;" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      
+      <span>
+        <img src="assets\img\delivery.jpg" width="32" height="32">
+        DeliveryEat!</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <mat-sidenav-container class="bg-transparent" style="height: calc(100vh - 64px);">
+    <mat-sidenav #drawer mode="over" role="navigation">
+      <mat-nav-list>
+        <mat-list-item routerLink='home/' (click)="drawer.toggle()">
+          <a style="padding-left: 24px; padding-right: 24px;">Home</a>
+          <mat-icon matListIcon>home</mat-icon>
+        </mat-list-item>
+        <mat-list-item (click)="drawer.toggle()">
+          <a style="padding-left: 24px; padding-right: 24px;">Tu perfil</a>
+          <mat-icon matListIcon>person</mat-icon>
+        </mat-list-item>
+        <mat-list-item routerLink='loquesea/' (click)="drawer.toggle()">
+          <a style="padding-left: 24px; padding-right: 24px;">Lo que sea</a>
+          <mat-icon matListIcon>directions_bike</mat-icon>
+        </mat-list-item>
+        <mat-list-item (click)="drawer.toggle()">
+          <a style="padding-left: 24px; padding-right: 24px;">Soporte</a>
+          <mat-icon matListIcon>support</mat-icon>
+        </mat-list-item>
+        <mat-list-item (click)="drawer.toggle()">
+          <a style="padding-left: 24px; padding-right: 24px;">Ayuda</a>
+          <mat-icon matListIcon>help</mat-icon>
+        </mat-list-item>
+        <mat-list-item (click)="drawer.toggle(); openDialog()">
+          <a style="padding-left: 24px; padding-right: 24px;">Acerca de</a>
+          <mat-icon matListIcon>info</mat-icon>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

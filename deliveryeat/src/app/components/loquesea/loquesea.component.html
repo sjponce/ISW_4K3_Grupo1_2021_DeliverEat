@@ -1,0 +1,290 @@
+<div class="container" *ngIf="modo == 1">
+  <mat-icon routerLink="/home" class="mat-18" style="cursor: pointer; margin-bottom: 8px;"
+    >arrow_back</mat-icon
+  >
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <div style="border-bottom: 1px solid black; color: black; width: 100%;">
+      <h4>¿Que deseas pedir?</h4>
+    </div>
+  </div>
+
+  <form [formGroup]="formLoQueSea">
+    <div class="mx-3 mt-4" style="color: black">
+      <mat-form-field style="width: 100%" appearance="outline" color="primary">
+        <mat-label>Descripción del pedido <strong>*</strong></mat-label>
+        <textarea
+          formControlName="Descripcion"
+          cdkAutosizeMinRows="5"
+          cdkTextareaAutosize
+          matInput
+        ></textarea>
+        <mat-error
+          *ngIf="
+            formLoQueSea.controls.Descripcion.invalid &&
+            (formLoQueSea.controls.Descripcion.dirty ||
+              formLoQueSea.controls.Descripcion.touched)
+          "
+        >
+          <mat-error *ngIf="formLoQueSea.controls.Descripcion.errors.required">
+            Campo <strong>requerido</strong>
+          </mat-error>
+          <mat-error *ngIf="formLoQueSea.controls.Descripcion.errors.maxlength">
+            Demasiados <strong>caracteres</strong>
+          </mat-error>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="mx-3 mt-1 d-flex align-items-center" style="color: black">
+      <label class="mr-3 mb-0">Agregar imagen descriptiva (JPG): </label>
+      <button
+        mat-mini-fab
+        color="primary"
+        style="outline: none"
+        (click)="imgUpload.click()"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <input
+      style="display: none"
+      type="file"
+      (change)="onSelectImage($event); imgUpload.value = ''"
+      #imgUpload
+    />
+
+    <div class="image-area mt-5 ml-5" *ngIf="imageUrl">
+      <img [src]="imageUrl" width="180" height="150" alt="Preview" />
+      <button
+        class="remove-image"
+        (click)="imageUrl = null"
+        style="display: inline"
+      >
+        &#215;
+      </button>
+    </div>
+
+    <div class="mt-4" style="border-bottom: 1px solid black; color: black">
+      <h4>¿Cuándo quieres recibirlo?</h4>
+    </div>
+
+    <div class="mx-3 mt-4" style="color: black">
+      <mat-checkbox checked="loantesposible" (click)="habilitarFechaEntrega()"
+        >Lo antes posible</mat-checkbox
+      >
+      <div class="row d-flex align-items-center" *ngIf="!loantesposible">
+        <div class="col-8">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Fecha de entrega</mat-label>
+            <input
+              formControlName="fechaEntrega"
+              matInput
+              [matDatepicker]="datepicker"
+              style="outline: none"
+              [min]="date"
+              [max]="dateMax"
+              readonly
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="datepicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker touchUi #datepicker></mat-datepicker>
+            <mat-error
+              *ngIf="
+                formLoQueSea.controls.fechaEntrega.invalid &&
+                (formLoQueSea.controls.fechaEntrega.dirty ||
+                  formLoQueSea.controls.fechaEntrega.touched)
+              "
+            >
+              <mat-error
+                *ngIf="formLoQueSea.controls.fechaEntrega.errors.required"
+              >
+                Campo <strong>requerido</strong>
+              </mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-4" style="color: black">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Hora</mat-label>
+            <input
+              formControlName="horaEntrega"
+              matInput
+              [ngxTimepicker]="defaultValue"
+              style="outline: none"
+              readonly
+              [min]="getTime()"
+              [format]="24"
+            />
+            <ngx-material-timepicker
+              #defaultValue
+              [minutesGap]="30"
+            ></ngx-material-timepicker>
+            <mat-error
+              *ngIf="
+                formLoQueSea.controls.horaEntrega.invalid &&
+                (formLoQueSea.controls.horaEntrega.dirty ||
+                  formLoQueSea.controls.horaEntrega.touched)
+              "
+            >
+              <mat-error
+                *ngIf="formLoQueSea.controls.horaEntrega.errors.required"
+              >
+                Campo <strong>requerido</strong>
+              </mat-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="mx-3 mt-5 d-flex justify-content-center mb-5" style="color: black">
+    <button mat-raised-button color="warn" (click)="cancelar()">
+      Cancelar
+      <mat-icon>close</mat-icon>
+    </button>
+    <button
+      class="ml-3"
+      mat-raised-button
+      color="primary"
+      style="outline: none"
+      (click)="cambiarModo('select_origen')"
+    >
+      Continuar
+      <mat-icon>forward</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="container" *ngIf="modo == 2 || modo == 3">
+  <mat-icon
+    (click)="ngOnInit()"
+    class="mat-18"
+    style="color: black; cursor: pointer"
+    >arrow_back</mat-icon
+  >
+
+  <div style="border-bottom: 1px solid black; color: black" class="text-left">
+    <h4>Seleccionar {{ seleccionar }}</h4>
+  </div>
+
+  <form [formGroup]="formDirLocal">
+    <mat-form-field
+      class="mt-4"
+      style="width: 100%; color: black"
+      appearance="outline"
+      color="primary"
+    >
+      <mat-label>Ciudad *</mat-label>
+      <mat-select #comboCity formControlName="Ciudad" style="color: black">
+        <mat-option *ngFor="let ciudad of cities" [value]="ciudad.value">
+          {{ ciudad.city }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="row">
+      <div class="col-8">
+        <mat-form-field
+          style="width: 100%; color: black"
+          appearance="outline"
+          color="primary"
+        >
+          <mat-label>Calle *</mat-label>
+          <input #inputStreet formControlName="Calle" matInput />
+          <mat-error
+            *ngIf="
+              formDirLocal.controls.Calle.invalid &&
+              (formDirLocal.controls.Calle.dirty ||
+                formDirLocal.controls.Calle.touched)
+            "
+          >
+            <mat-error *ngIf="formDirLocal.controls.Calle.errors.required">
+              Campo <strong>requerido</strong>
+            </mat-error>
+            <mat-error *ngIf="formDirLocal.controls.Calle.errors.maxlength">
+              Demasiados <strong>caracteres</strong>
+            </mat-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <mat-form-field
+          style="width: 100%; color: black"
+          appearance="outline"
+          color="primary"
+        >
+          <mat-label>Número *</mat-label>
+          <input #inputNumber formControlName="Numero" matInput />
+          <mat-error
+            *ngIf="
+              formDirLocal.controls.Numero.invalid &&
+              (formDirLocal.controls.Numero.dirty ||
+                formDirLocal.controls.Numero.touched)
+            "
+          >
+            <mat-error *ngIf="formDirLocal.controls.Numero.errors.required">
+              Campo <strong>requerido</strong>
+            </mat-error>
+            <mat-error *ngIf="formDirLocal.controls.Numero.errors.pattern">
+              Número <strong>inválido</strong>
+            </mat-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-form-field
+      style="width: 100%; color: black"
+      appearance="outline"
+      color="primary"
+    >
+      <mat-label>Referencia</mat-label>
+      <input formControlName="Descripcion" matInput />
+    </mat-form-field>
+  </form>
+  <div class="mt-4" style="color: black;">
+    <agm-map
+      (mapClick)="addMarker($event)"
+      [latitude]="mapLat"
+      [longitude]="mapLong"
+      [zoom]="15"
+    >
+      <agm-marker
+        [latitude]="marker.lat"
+        [longitude]="marker.long"
+        [visible]="markerVisible"
+      ></agm-marker>
+    </agm-map>
+  </div>
+  <div class="d-flex justify-content-center" style="color: black; padding-top: 16px; padding-bottom: 16px;">
+    <button mat-raised-button color="warn" (click)="cancelar()">
+      Cancelar
+      <mat-icon>close</mat-icon>
+    </button>
+    <button
+      mat-raised-button
+      class="ml-3"
+      *ngIf="modo == 2"
+      color="primary"
+      style="outline: none"
+      (click)="cambiarModo('select_destino')"
+    >
+      Continuar
+      <mat-icon>forward</mat-icon>
+    </button>
+    <button
+      mat-raised-button
+      class="ml-3"
+      *ngIf="modo == 3"
+      color="primary"
+      style="outline: none"
+      (click)="irAPago()"
+    >
+      Continuar
+      <mat-icon>forward</mat-icon>
+    </button>
+  </div>
+</div>
