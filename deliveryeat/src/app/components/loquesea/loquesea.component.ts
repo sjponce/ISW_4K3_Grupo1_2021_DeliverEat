@@ -263,8 +263,6 @@ export class LoqueseaComponent implements OnInit {
     switch (modo) {
       case "select_origen": {
         this.formLoQueSea.markAllAsTouched();
-        console.log(this.formLoQueSea);
-        
         if (this.formLoQueSea.invalid) {
           return;
         }
@@ -314,6 +312,7 @@ export class LoqueseaComponent implements OnInit {
           return;
         }
 
+
         // Guardar en localstorage
         localStorage.setItem(
           "pedidoCiudad",
@@ -345,7 +344,6 @@ export class LoqueseaComponent implements OnInit {
         // Cargar del localstorage
         let aux = localStorage.getItem("pedidoCalleDestino");
         if (aux) {
-          
           this.formDirLocal.controls.Calle.setValue(aux);
           aux = localStorage.getItem("pedidoAlturaDestino") ? localStorage.getItem("pedidoAlturaDestino") : "";
           this.formDirLocal.controls.Numero.setValue(aux);
@@ -358,11 +356,20 @@ export class LoqueseaComponent implements OnInit {
           aux = localStorage.getItem("pedidoCiudad") ? localStorage.getItem("pedidoCiudad") : "";
           this.formDirLocal.controls.Ciudad.setValue(parseInt(aux));
           this.ciudadOrigen = parseInt(aux);
+          this.formDirLocal
         } else {
           this.ciudadOrigen = this.formDirLocal.controls.Ciudad.value;
           this.formDirLocal.reset();
+          
           this.formDirLocal.controls.Ciudad.setValue(this.ciudadOrigen);
         }
+
+        this.formDirLocal = this.formBuilder.group({
+          Ciudad: [this.cities[0].value, [Validators.required]],
+          Calle: ["", [Validators.required, Validators.maxLength(255)]],
+          Numero: ["", [Validators.required, Validators.pattern("[0-9]{1,7}")]],
+          Descripcion: ["", [Validators.maxLength(255)]],
+        });
 
         this.seleccionar = 'dirección de entrega';
         this.formDirLocal.controls.Ciudad.disable();
@@ -377,6 +384,11 @@ export class LoqueseaComponent implements OnInit {
   }
 
   irAPago() {
+    this.formDirLocal.controls.Calle.markAsTouched();
+    this.formDirLocal.controls.Numero.markAsTouched();
+    if (this.formDirLocal.invalid) {
+      return;
+    }
     // Guardar en localstorage
     localStorage.setItem(
       "pedidoCalleDestino",
